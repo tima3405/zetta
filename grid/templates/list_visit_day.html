@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}list-visit{% endblock title %}
+{% block content %}
+<div class="col-md-12">
+    <!--     за сегодня -->
+    <br>
+    <form action="{% url 'list_visit_day' %}" method="POST">
+        {% csrf_token %}
+        <input type="date" class="form-submit" name="day" id="day"
+               placeholder="Todays Date" required>
+        <button>ПРОВЕРИТЬ</button>
+    </form>
+
+    <div class="table-responsive">
+        <table id="bootstrapdatatable" class="table table-striped table-bordered" width="100%">
+            <thead>
+            <th>ИМЯ</th>
+            <th>ПООСЕТИЛ(А)</th>
+            <th>ВРЕМЯ ПРИХОДА</th>
+            <th>ВРЕМЯ УХОДА</th>
+            <th>ПРИЧИНА</th>
+            </thead>
+            <tbody>
+            <h3>{{ day }}</h3>
+            <button>
+            <a href="{% url 'export_excel' %}">Загрузить все посещения</a>
+            </button>
+            {% for visit in visits %}
+
+            <tr>
+
+                <td><a href="{{ visit.user.get_absolute_url }}">{{ visit.user.name }}</a></td>
+                {% if visit.visited == True %}
+                <td>Поcетил(а)</td>
+                {% else %}
+                <td>Отсутствовал(а)</td>
+                {% endif %}
+                {% if visit.time_start %}
+                <td>{{ visit.time_start }}</td>
+                {% else %}
+                <td>----</td>
+                {% endif %}
+                {% if visit.time_end %}
+                <td>{{ visit.time_end }}</td>
+                {% else %}
+                <td>----</td>
+                {% endif %}
+                {% if visit.reason %}
+                <td>{{ visit.reason }}</td>
+                {% else %}
+                <td>----</td>
+                {% endif %}
+            </tr>
+            {%endfor%}
+            </tbody>
+        </table>
+    </div>
+
+    {%endblock content%}
